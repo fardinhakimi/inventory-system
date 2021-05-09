@@ -1,0 +1,1 @@
+export const toArray = (item: string | Array<string>) => !Array.isArray(item) ? [item] : item

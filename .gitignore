@@ -1,0 +1,2 @@
+skaffold.yml
+service/*/node_modules
