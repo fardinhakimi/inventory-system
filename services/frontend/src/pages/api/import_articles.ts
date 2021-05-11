@@ -4,25 +4,25 @@ import fetch from "node-fetch";
 
 const feedInventory = (jsonData: string) => {
   const {
-    articles
+    inventory
   }: {
-    articles?: Array<{
+    inventory?: Array<{
       id: string;
       name: string;
       stock: number;
     }>;
   } = JSON.parse(jsonData);
 
-  if (!articles) return;
+  if (!inventory) return;
 
-  articles.forEach(article => {
+  inventory.forEach(article => {
     fetch(`http://inventory-service:3000/article`, {
-      method: "POST",
+      method: "post",
       body: JSON.stringify(article),
       headers: { "Content-Type": "application/json" }
     })
       .then(data => console.log("article imported"))
-      .catch(data => console.log("article import failed"));
+      .catch(err => console.log("article import failed"));
   });
 };
 

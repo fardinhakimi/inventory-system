@@ -10,7 +10,7 @@ export const getArticles = async (
     const page = toArray(req.query["page"] || "0").shift();
 
     const response = await fetch(
-      `https://inventory-service:3000/articles?page=${page}`
+      `http://inventory-service:3000/articles?page=${page}`
     );
 
     const {

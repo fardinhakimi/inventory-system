@@ -2,6 +2,7 @@ const Article = require('./model/article')
 const fetch = require('node-fetch')
 
 const updateArticleStock = async ({ id, amount }) => {
+    console.log(`update article stock for article id ${id} and amount of ${amount}`)
     const existingArticle = await Article.findOne({ id })
     if (!existingArticle) throw new Error('Article no longer exists')
     const newStock = existingArticle.stock - amount
@@ -29,6 +30,7 @@ const updateOrCreateOne = async ({ id, name, stock }) => {
 }
 
 const updateProductsView = (id) => {
+    console.log(` update products view for article id ${id}`)
     // We do not care about the response
     fetch('http://query-service:3000/update_products_view', {
         method: 'post',

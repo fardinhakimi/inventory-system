@@ -20,6 +20,8 @@ app.post('/update_products_view', async (req, res, next) => {
 
   try {
 
+    console.log('Updating products_view on query service')
+
     const event = req.body
 
     console.log(event)
@@ -39,6 +41,9 @@ app.post('/update_products_view', async (req, res, next) => {
 app.get('/products', async (req, res) => {
 
   try {
+
+    console.log('fetching products from products_view')
+
     const perPage = 10
 
     const page = req.query.page || 0

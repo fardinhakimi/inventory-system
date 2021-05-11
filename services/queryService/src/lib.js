@@ -4,7 +4,7 @@ const Product = require('./model/product')
 const fetchArticleStock = async (articleId) => {
 
     try {
-
+        console.log(` fetching stock for article (${articleId})`)
         const response = await fetch(`http://inventory-service/article/${articleId}`)
         const article = await response.json()
         return article.stock
@@ -18,6 +18,8 @@ const fetchArticleStock = async (articleId) => {
 
 const updateProductView = (event) => {
 
+    console.log('updateProductView: ', { event })
+
     switch (event.type) {
         case 'PRODUCT_CREATED':
             pushProductToView(event.payload)
@@ -29,11 +31,14 @@ const updateProductView = (event) => {
 }
 
 const updateProductQuantity = async (product, quantity) => {
+    console.log(`updating product quantity for ${product.name} (${product.id})`)
     product.quantity = quantity
     product.save().then(data => console.log('quantity updated')).catch(err => console.error(err.message))
 }
 
 const updateQuantityForProducts = (id) => {
+
+    console.log(`updating product quantity for all products containing an article with id of ${id}`)
 
     // find all products which contain this article and update their quantity
 
@@ -64,6 +69,7 @@ const updateQuantityForProducts = (id) => {
  */
 const calculateQantityForProduct = async (product) => {
 
+    console.log(`calculating quantity for product: ${product.name} (${product.id})`)
 
     const potentialNumbers = []
 
@@ -92,10 +98,9 @@ const calculateQantityForProduct = async (product) => {
 
 const pushProductToView = async (product) => {
 
-    const quantity = await calculateQantityForProduct(product)
+    console.log(`Adding new product to products_view: ${product.name} (${product.id})`)
 
-    console.log(' quantity ')
-    console.log(quantity)
+    const quantity = await calculateQantityForProduct(product)
 
     const newProduct = new Product({
         id: product.id,

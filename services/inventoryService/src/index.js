@@ -18,6 +18,8 @@ app.post('/update_inventory', async (req, res, next) => {
 
   try {
 
+    console.log(' updating the inventory ', { event })
+
     const event = req.body
 
     if (event.type === 'ARTICLE_SOLD') {
@@ -37,6 +39,8 @@ app.post('/update_inventory', async (req, res, next) => {
 app.get('/article/:id', async (req, res, next) => {
 
   try {
+
+    console.log(' fetching single article ')
 
     if (!req.params.id) throw new Error()
 
@@ -61,6 +65,10 @@ app.post('/article', [
 ], validateRequest, async (req, res, next) => {
   try {
 
+    console.log(' creating single article ')
+
+    console.log(req.body)
+
     const { id } = await updateOrCreateOne(req.body)
     updateProductsView(id)
 
@@ -74,6 +82,8 @@ app.post('/article', [
 app.get('/articles', async (req, res, next) => {
 
   try {
+    console.log(' fetching paginated articles ')
+    console.log(req.query)
 
     const perPage = 10
 

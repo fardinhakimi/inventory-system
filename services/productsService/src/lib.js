@@ -1,6 +1,8 @@
 const fetch = require('node-fetch')
 
 const updateProductsView = (product) => {
+    console.log('Product Service attempting to update the products view')
+
     fetch('http://query-service:3000/update_products_view', {
         method: 'POST',
         body: JSON.stringify({
@@ -17,6 +19,8 @@ const updateProductsView = (product) => {
 const updateInventory = (product) => {
 
     if (!product.articles) return
+
+    console.log('Product Service attempting to update the inventory')
 
     for (article of product.articles) {
         fetch('http://inventory-service:3000/update_inventory', {

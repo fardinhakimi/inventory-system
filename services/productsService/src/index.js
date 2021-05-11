@@ -18,6 +18,8 @@ app.get('/sell', async (req, res, next) => {
 
   try {
 
+    console.log(`Selling product with id of ${id}`)
+
     if (!req.query.id) throw new Error('id is missing')
 
     const id = req.query.id
