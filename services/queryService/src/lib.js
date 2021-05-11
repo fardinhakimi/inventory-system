@@ -71,13 +71,13 @@ const calculateQantityForProduct = async (product) => {
 
     console.log(`calculating quantity for product: ${product.name} (${product.id})`)
 
-    const potentialNumbers = []
+    const potentialQuantities = []
 
     for (const article of product.articles) {
 
         const articleStock = await fetchArticleStock(article.id)
 
-        console.log(' article stock ', articleStock)
+        console.log(` Article stock: ${articleStock} for article: (${article.id}) `)
 
         // do not update quantity
         if (articleStock === -1) return -1
@@ -85,13 +85,19 @@ const calculateQantityForProduct = async (product) => {
         const howMany = articleStock / article.amount
 
         if (howMany > 0) {
-            potentialNumbers.push(howMany)
+            potentialQuantities.push(howMany)
         } else {
-            potentialNumbers.push(0)
+            potentialQuantities.push(0)
         }
     }
 
-    return Math.floor(Math.min(...potentialNumbers))
+    console.log(` Quantity for product`, { product })
+
+    const quantity = Math.floor(Math.min(...potentialQuantities))
+
+    console.log(`Quantity selected out of`, potentialQuantities)
+
+    return quantity
 
 }
 
