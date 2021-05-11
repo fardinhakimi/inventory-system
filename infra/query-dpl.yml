@@ -15,7 +15,7 @@ spec:
       containers:
         - name: query-image
           image: fardinhakimi/query
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

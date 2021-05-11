@@ -15,7 +15,7 @@ spec:
       containers:
         - name: products-image
           image: fardinhakimi/products
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

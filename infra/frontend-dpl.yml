@@ -15,7 +15,7 @@ spec:
       containers:
         - name: frontend-image
           image: fardinhakimi/frontend
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service

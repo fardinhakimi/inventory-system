@@ -15,7 +15,7 @@ spec:
       containers:
         - name: inventory-image
           image: fardinhakimi/inventory
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
