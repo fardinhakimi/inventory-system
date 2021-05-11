@@ -36,15 +36,15 @@ app.post('/update_inventory', async (req, res, next) => {
 
 })
 
-app.get('/article/:id', async (req, res, next) => {
+app.get('/article', async (req, res, next) => {
 
   try {
 
     console.log(' fetching single article ')
 
-    if (!req.params.id) throw new Error()
+    if (!req.query.id) throw new Error('Missing id')
 
-    const id = req.params.id
+    const id = req.query.id
 
     const article = await Article.findOne({ id })
 

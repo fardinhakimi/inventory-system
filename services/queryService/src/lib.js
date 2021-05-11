@@ -5,7 +5,7 @@ const fetchArticleStock = async (articleId) => {
 
     try {
         console.log(` fetching stock for article (${articleId})`)
-        const response = await fetch(`http://inventory-service/article/${articleId}`)
+        const response = await fetch(`http://inventory-service:3000/article?id=${articleId}`)
         const article = await response.json()
         return article.stock
 
