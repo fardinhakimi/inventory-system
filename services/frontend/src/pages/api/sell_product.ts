@@ -14,7 +14,7 @@ export const sellProduct = async (
 
   try {
     const response = await fetch(
-      `http://products-service/sell?id=${productId}`
+      `http://products-service:3000/sell?id=${productId}`
     );
 
     if (!response.ok) throw new Error();
