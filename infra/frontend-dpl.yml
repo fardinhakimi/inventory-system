@@ -13,9 +13,9 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend-image
-        image: fardinhakimi/frontend
-        imagePullPolicy: IfNotPresent
+        - name: frontend-image
+          image: fardinhakimi/frontend
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
@@ -25,7 +25,7 @@ spec:
   selector:
     app: frontend
   ports:
-  - name: frontend-port
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
+    - name: frontend-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

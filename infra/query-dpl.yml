@@ -13,9 +13,9 @@ spec:
         app: query
     spec:
       containers:
-      - name: query-image
-        image: fardinhakimi/query
-        imagePullPolicy: IfNotPresent
+        - name: query-image
+          image: fardinhakimi/query
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
@@ -25,7 +25,7 @@ spec:
   selector:
     app: query
   ports:
-  - name: query-port
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
+    - name: query-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

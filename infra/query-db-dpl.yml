@@ -13,8 +13,8 @@ spec:
         app: query-db
     spec:
       containers:
-      - name: query-db-image
-        image: mongo
+        - name: query-db-image
+          image: mongo
 ---
 apiVersion: v1
 kind: Service
@@ -24,7 +24,7 @@ spec:
   selector:
     app: query-db
   ports:
-  - name: query-db-port
-    protocol: TCP
-    port: 27017
-    targetPort: 27017
+    - name: query-db-port
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

@@ -13,9 +13,9 @@ spec:
         app: products
     spec:
       containers:
-      - name: products-image
-        image: fardinhakimi/products
-        imagePullPolicy: IfNotPresent
+        - name: products-image
+          image: fardinhakimi/products
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
@@ -25,7 +25,7 @@ spec:
   selector:
     app: products
   ports:
-  - name: products-port
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
+    - name: products-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

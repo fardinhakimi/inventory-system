@@ -13,9 +13,9 @@ spec:
         app: inventory
     spec:
       containers:
-      - name: inventory-image
-        image: fardinhakimi/inventory
-        imagePullPolicy: IfNotPresent
+        - name: inventory-image
+          image: fardinhakimi/inventory
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
@@ -25,7 +25,7 @@ spec:
   selector:
     app: inventory
   ports:
-  - name: inventory-port
-    protocol: TCP
-    port: 3000
-    targetPort: 3000
+    - name: inventory-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

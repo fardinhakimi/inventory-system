@@ -3,36 +3,76 @@ const { body } = require('express-validator')
 const bodyParser = require('body-parser')
 const { connect } = require('mongoose')
 const { validateRequest, errorHandler } = require('./middleware/index')
+const { updateProductsView, updateInventory } = require('./lib')
 const Product = require('./model/product')
 
 const app = express()
 const PORT = 3000
 
+
 app.use(bodyParser.json())
+
 app.get('/heartbeat', (req, res) => res.status(200).send('Product Service is alive'))
+
+app.get('/sell', async (req, res, next) => {
+
+  try {
+
+    if (!req.query.id) throw new Error('id is missing')
+
+    const id = req.query.id
+
+    const product = await Product.findOne({ id })
+
+    if (!product) throw new Error(`No such product found: ${id}`)
+    // Do not wait for this and continue
+    // This should be refactored and be an event instead going to the event bus.
+    updateInventory(product)
+
+    return res.status(200).send()
+
+  } catch (error) {
+    next(error)
+  }
+})
 
 /**
  * Endpoint responsible for creating a single product
  */
-app.post('/product',[
-  body('name').notEmpty().withMessage('Product name must be provided'),
-  body('price').notEmpty().withMessage('Price must be provided'),
-  body('articles').exists().withMessage('Articles must be provided'),
-  body('articles.*.id').notEmpty().isString().withMessage('Article id must be provided'),
-  body('articles.*.amount').notEmpty().isNumeric().withMessage('Article amount must be provided'),
-], validateRequest, async (req, res, next ) => {
+app.post('/product', [
+  body('id').notEmpty().isString().withMessage('id must be provided'),
+  body('name').notEmpty().withMessage('name must be provided'),
+  body('price').notEmpty().isNumeric().withMessage('price must be provided'),
+  body('articles').exists().withMessage('articles must be provided'),
+], validateRequest, async (req, res, next) => {
 
   try {
 
-    const product = new Product(req.body)
-    await product.save()
-    // EMIT EVENT -> ProductCreated
-    
+    const { id, name, price, articles } = req.body
+
+    const existingProduct = await Product.findOne({ id })
+
+    let product = null
+
+    if (existingProduct) {
+      existingProduct.name = name
+      existingProduct.price = price
+      existingProduct.articles = articles
+      product = await existingProduct.save()
+    } else {
+      const newProduct = new Product(req.body)
+      product = await newProduct.save()
+    }
+
+    updateProductsView(product)
+
+    return res.status(200).send()
+
   } catch (err) {
     next(err)
   }
 
-  return res.status(201).send({ products })
+  return res.status(201).send({ product })
 })
 
 app.use(errorHandler)

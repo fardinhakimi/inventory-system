@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator')
-const { CustomError } = require('../error')
+const { CustomError, ValidationError } = require('../error')
 
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req)
@@ -13,7 +13,8 @@ function errorHandler(err, req, res, next) {
   if (err instanceof CustomError) {
     return res.status(err.getStatusCode()).send({ errors: err.serializeErrors() })
   }
-  return res.status(400).send({ errors: { message: 'something went wrong'}})
+  console.error(err.message)
+  return res.status(400).send({ errors: { message: 'something went wrong' } })
 }
 
 module.exports = {

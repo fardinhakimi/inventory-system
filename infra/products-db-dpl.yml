@@ -13,8 +13,8 @@ spec:
         app: products-db
     spec:
       containers:
-      - name: products-db-image
-        image: mongo
+        - name: products-db-image
+          image: mongo
 ---
 apiVersion: v1
 kind: Service
@@ -24,7 +24,7 @@ spec:
   selector:
     app: products-db
   ports:
-  - name: products-db-port
-    protocol: TCP
-    port: 27017
-    targetPort: 27017
+    - name: products-db-port
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

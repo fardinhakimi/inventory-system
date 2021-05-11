@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose'
+const { Schema, model } = require('mongoose')
 
-const Schema = new Schema(
-    {
+const articleSchema = new Schema(
+  {
     id: {
       type: String,
       required: true,
@@ -21,6 +21,6 @@ const Schema = new Schema(
   }
 )
 
-const Article = model('Article', Schema)
+const Article = model('Article', articleSchema)
 
 module.exports = Article

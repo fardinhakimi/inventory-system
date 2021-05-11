@@ -1,0 +1,38 @@
+{
+  "PRODUCTS": [
+    {
+      "NAME": "DINING CHAIR",
+      "CONTAIN_ARTICLES": [
+        {
+          "ART_ID": "1",
+          "AMOUNT_OF": "4"
+        },
+        {
+          "ART_ID": "2",
+          "AMOUNT_OF": "8"
+        },
+        {
+          "ART_ID": "3",
+          "AMOUNT_OF": "1"
+        }
+      ]
+    },
+    {
+      "NAME": "DINNING TABLE",
+      "CONTAIN_ARTICLES": [
+        {
+          "ART_ID": "1",
+          "AMOUNT_OF": "4"
+        },
+        {
+          "ART_ID": "2",
+          "AMOUNT_OF": "8"
+        },
+        {
+          "ART_ID": "4",
+          "AMOUNT_OF": "1"
+        }
+      ]
+    }
+  ]
+}

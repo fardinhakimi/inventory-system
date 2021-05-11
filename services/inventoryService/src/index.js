@@ -4,71 +4,113 @@ const { body } = require('express-validator')
 const { connect } = require('mongoose')
 const { validateRequest, errorHandler } = require('./middleware/index')
 const Article = require('./model/article')
-const { updateOrCreateOne } = require('./article')
+const { updateOrCreateOne, updateArticleStock, updateProductsView } = require('./lib')
 const app = express()
 const PORT = 3000
-
-
 app.set('trust proxy', 1)
 app.use(bodyParser.json())
 app.get('/heartbeat', (req, res) => res.status(200).send('Inventory Service is alive'))
 
+/**
+ * Used when a sell is made / product is removed and the inventory needs to be updated
+ */
+app.post('/update_inventory', async (req, res, next) => {
 
-app.post('/article', [
-  body('id').notEmpty().withMessage('Article Id must be provided'),
-  body('name').notEmpty().withMessage('Product name must be provided'),
-  body('stock').notEmpty().isNumeric().withMessage('Article stock must be provided')
-], validateRequest, async(req,res,next) => {
   try {
 
-    const { id, name, stock } = req.body
+    const event = req.body
 
-    await updateOrCreateOne({ id, name, stock })
+    if (event.type === 'ARTICLE_SOLD') {
+      const updateArticle = await updateArticleStock(event.payload)
+      updateProductsView(updateArticle.id)
+    }
 
-    // EMIT EVENT: InventoryUpdate
-    
   } catch (err) {
-      console.error(err)
-      next(err)
+    console.error(err)
+    next(err)
+  }
+
+  return res.status(200).send()
+
+})
+
+app.get('/article/:id', async (req, res, next) => {
+
+  try {
+
+    if (!req.params.id) throw new Error()
+
+    const id = req.params.id
+
+    const article = await Article.findOne({ id })
+
+    if (!article) throw new Error()
+
+    return res.status(200).send(article)
+
+  } catch (error) {
+    next(error)
   }
 
 })
+
+app.post('/article', [
+  body('id').notEmpty().withMessage('id must be provided'),
+  body('name').notEmpty().withMessage('name must be provided'),
+  body('stock').notEmpty().isNumeric().withMessage('stock must be provided')
+], validateRequest, async (req, res, next) => {
+  try {
+
+    const { id } = await updateOrCreateOne(req.body)
+    updateProductsView(id)
+
+    return res.status(200).send()
+
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
+})
 app.get('/articles', async (req, res, next) => {
 
-    try {
-        const previous = req.query.previous || ''
-        // use previous otherwise set it to an old date so we get the first one
-        const dateString = previous !== '' ? previous :'2010-07-21T12:01:35'
+  try {
 
-        const articles = Article.find({
-            date: { $gt: ISODate(dateString)}
-        }).sort({ date: 1}).limit(10)
+    const perPage = 10
 
-        res.status(200).send({ articles })
-        
-    } catch (err) {
-        console.error(err)
-        next(err)
-    }
+    const page = req.query.page || 0
+
+    const skips = page === 0 ? 0 : (page * perPage)
+
+    const total = await Article.countDocuments()
+
+    const articles = await Article.find().skip(skips).limit(perPage)
+
+    res.status(200).send({ articles, total })
+
+  } catch (err) {
+    console.error(err)
+    next(err)
+  }
 })
 
 app.use(errorHandler)
 
 async function start() {
-    try {
-      await connect('mongodb://inventory-db-service:27017/inventory-db', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true
-      })
-      console.log('Connected to the inventory-db')
-    } catch (err) {
-      console.error(err)
-      console.log('Failed to connect to the inventory-db')
-    }
-    app.listen(PORT, () => {
-      console.log(`Inventory service listening on port ${PORT}`)
+  try {
+
+    await connect('mongodb://inventory-db-service:27017/inventory-db', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true
     })
+    console.log('Connected to the inventory-db')
+  } catch (err) {
+    console.error(err)
+    console.log('Failed to connect to the inventory-db')
   }
-  
-  start()
+  app.listen(PORT, () => {
+    console.log(`Inventory service listening on port ${PORT}`)
+  })
+}
+
+start()

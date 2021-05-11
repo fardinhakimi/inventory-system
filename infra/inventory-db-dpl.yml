@@ -13,8 +13,8 @@ spec:
         app: inventory-db
     spec:
       containers:
-      - name: inventory-db-image
-        image: mongo
+        - name: inventory-db-image
+          image: mongo
 ---
 apiVersion: v1
 kind: Service
@@ -24,7 +24,7 @@ spec:
   selector:
     app: inventory-db
   ports:
-  - name: inventory-db-port
-    protocol: TCP
-    port: 27017
-    targetPort: 27017
+    - name: inventory-db-port
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
