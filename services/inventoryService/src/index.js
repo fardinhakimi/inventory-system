@@ -50,6 +50,8 @@ app.get('/article', async (req, res, next) => {
 
     if (!article) throw new Error()
 
+    console.log(` Retrieved article for article id (${id})`)
+
     return res.status(200).send(article)
 
   } catch (error) {

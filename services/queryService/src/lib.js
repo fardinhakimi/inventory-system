@@ -7,6 +7,8 @@ const fetchArticleStock = async (articleId) => {
         console.log(` fetching stock for article (${articleId})`)
         const response = await fetch(`http://inventory-service:3000/article?id=${articleId}`)
         const article = await response.json()
+        console.log(` Got below article for id ${articleId}`)
+        console.log(article)
         return article.stock
 
     } catch (error) {
@@ -95,7 +97,7 @@ const calculateQantityForProduct = async (product) => {
 
     const quantity = Math.floor(Math.min(...potentialQuantities))
 
-    console.log(`Quantity selected out of`, potentialQuantities)
+    console.log(`Quantity ${quantity} selected out of`, potentialQuantities)
 
     return quantity
 
@@ -107,18 +109,38 @@ const pushProductToView = async (product) => {
     console.log(`Adding new product to products_view: ${product.name} (${product.id})`)
 
     const quantity = await calculateQantityForProduct(product)
+    const finalQuantity = quantity === -1 ? 0 : quantity
+    const existingProduct = await Product.findOne({ id: product.id })
 
-    const newProduct = new Product({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        // if we fail to get quantity we set it to 0
-        quantity: quantity === -1 ? 0 : quantity,
-        articles: product.articles.map(({ id, amount }) => ({ id, amount }))
-    })
+    console.log(`Final quantity: (${finalQuantity}) for product (${product.id})`)
 
-    newProduct.save().then((doc) => { console.log(' Product pushed to product-view') })
-        .catch(err => console.error('failed to insert product to product-view'))
+    const productArticles = product.articles.map(({ id, amount }) => ({ id, amount }))
+
+    if (existingProduct) {
+
+        existingProduct.id = product.id
+        existingProduct.name = product.name
+        existingProduct.price = product.price
+        existingProduct.quantity = finalQuantity
+        existingProduct.articles = productArticles
+
+        existingProduct.save().then((doc) => { console.log(' Product updated in the product-view') })
+            .catch(err => console.error('failed to update the product in the product-view'))
+
+    } else {
+        const newProduct = new Product({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            // if we fail to get quantity we set it to 0
+            quantity: finalQuantity,
+            articles: productArticles
+        })
+
+        newProduct.save().then((doc) => { console.log(' Product pushed to product-view') })
+            .catch(err => console.error('failed to insert product to product-view'))
+    }
+
 }
 
 module.exports = { updateProductView }
