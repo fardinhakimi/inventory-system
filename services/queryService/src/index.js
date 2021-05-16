@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const { connect } = require('mongoose')
 const Product = require('./model/product')
 const { errorHandler } = require('./middleware')
@@ -11,7 +10,7 @@ const PORT = 3000
 
 
 app.set('trust proxy', 1)
-app.use(bodyParser.json())
+app.use(express.json())
 
 app.get('/heartbeat', (req, res) => res.status(200).send('Query Service is alive'))
 

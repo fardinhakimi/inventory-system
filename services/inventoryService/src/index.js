@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const { body } = require('express-validator')
 const { connect } = require('mongoose')
 const { validateRequest, errorHandler } = require('./middleware/index')
@@ -8,7 +7,7 @@ const { updateOrCreateOne, updateArticleStock, updateProductsView } = require('.
 const app = express()
 const PORT = 3000
 app.set('trust proxy', 1)
-app.use(bodyParser.json())
+app.use(express.json())
 app.get('/heartbeat', (req, res) => res.status(200).send('Inventory Service is alive'))
 
 /**
