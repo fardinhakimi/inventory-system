@@ -11,7 +11,7 @@ const PORT = 3000
 
 app.use(express.json())
 
-app.get('/heartbeat', (req, res) => res.status(200).send('Product Service is alive'))
+app.get('/', (req, res) => res.status(200).send('Product Service is alive'))
 
 app.get('/sell', async (req, res, next) => {
 
@@ -80,7 +80,7 @@ app.post('/product', [
 app.use(errorHandler)
 
 async function start() {
-  /*
+
   try {
     await connect('mongodb://products-db-service:27017/products', {
       useNewUrlParser: true,
@@ -92,7 +92,6 @@ async function start() {
     console.error(err)
     console.log('Failed to connect to the product db')
   }
-  */
   app.listen(PORT, () => {
     console.log(`Products service listening on port ${PORT}`)
   })
