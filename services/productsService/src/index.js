@@ -1,6 +1,5 @@
 const express = require('express')
 const { body } = require('express-validator')
-const bodyParser = require('body-parser')
 const { connect } = require('mongoose')
 const { validateRequest, errorHandler } = require('./middleware/index')
 const { updateProductsView, updateInventory } = require('./lib')
@@ -10,7 +9,7 @@ const app = express()
 const PORT = 3000
 
 
-app.use(bodyParser.json())
+app.use(express.json())
 
 app.get('/heartbeat', (req, res) => res.status(200).send('Product Service is alive'))
 
@@ -18,17 +17,18 @@ app.get('/sell', async (req, res, next) => {
 
   try {
 
-    console.log(`Selling product with id of ${id}`)
+   if (!req.query.id) throw new Error('id is missing')
 
-    if (!req.query.id) throw new Error('id is missing')
+   const id = req.query.id
 
-    const id = req.query.id
-
-    const product = await Product.findOne({ id })
-
-    if (!product) throw new Error(`No such product found: ${id}`)
+   console.log(`Selling product with id of ${id}`)
+   
+   const product = await Product.findOne({ id })
+   
+   if (!product) throw new Error(`No such product found: ${id}`)
     // Do not wait for this and continue
     // This should be refactored and be an event instead going to the event bus.
+    
     updateInventory(product)
 
     return res.status(200).send()
@@ -80,6 +80,7 @@ app.post('/product', [
 app.use(errorHandler)
 
 async function start() {
+  /*
   try {
     await connect('mongodb://products-db-service:27017/products', {
       useNewUrlParser: true,
@@ -91,6 +92,7 @@ async function start() {
     console.error(err)
     console.log('Failed to connect to the product db')
   }
+  */
   app.listen(PORT, () => {
     console.log(`Products service listening on port ${PORT}`)
   })
