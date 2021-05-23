@@ -18,20 +18,6 @@ const fetchArticleStock = async (articleId) => {
     }
 }
 
-const updateProductView = (event) => {
-
-    console.log('updateProductView: ', { event })
-
-    switch (event.type) {
-        case 'PRODUCT_CREATED':
-            pushProductToView(event.payload)
-            break;
-        case 'INVENTORY_UPDATED':
-            updateQuantityForProducts(event.payload.id)
-            break
-    }
-}
-
 const updateProductQuantity = async (product, quantity) => {
     console.log(`updating product quantity for ${product.name} (${product.id})`)
     product.quantity = quantity
@@ -143,4 +129,7 @@ const pushProductToView = async (product) => {
 
 }
 
-module.exports = { updateProductView }
+module.exports = { 
+    pushProductToView,
+    updateQuantityForProducts
+ }

@@ -1,5 +1,7 @@
+const { StringCodec } = require('nats')
 const Article = require('./model/article')
-const fetch = require('node-fetch')
+
+const sc = StringCodec()
 
 const updateArticleStock = async ({ id, amount }) => {
     console.log(`update article stock for article id ${id} and amount of ${amount}`)
@@ -29,21 +31,13 @@ const updateOrCreateOne = async ({ id, name, stock }) => {
     return article
 }
 
-const updateProductsView = (id) => {
-    console.log(` update products view for article id ${id}`)
-    // We do not care about the response
-    fetch('http://query-service:3000/update_products_view', {
-        method: 'post',
-        body: JSON.stringify({ type: 'INVENTORY_UPDATED', payload: { id } }),
-        headers: { 'Content-Type': 'application/json' }
-    }).catch(err => {
-        console.error(err)
-        console.error('Failed to update products_view')
-    })
+const updateInventory = async (event, eventBus) => {
+    updateArticleStock(event.payload).then( article => {
+        eventBus.publish("inventory", sc.encode(JSON.stringify({type: 'INVENTORY_UPDATED', payload: { id: article.id }})))
+    }).catch( error => console.log(error))
 }
 
 module.exports = {
-    updateProductsView,
-    updateArticleStock,
-    updateOrCreateOne
+    updateInventory,
+    updateOrCreateOne,
 }

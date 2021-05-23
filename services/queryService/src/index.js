@@ -1,8 +1,9 @@
 const express = require('express')
-const { connect } = require('mongoose')
+const mongoose = require('mongoose')
+const { connect } = require("nats")
 const Product = require('./model/product')
 const { errorHandler } = require('./middleware')
-const { updateProductView } = require('./lib')
+const messageHandler = require('./messageHandler')
 
 const app = express()
 
@@ -13,29 +14,6 @@ app.set('trust proxy', 1)
 app.use(express.json())
 
 app.get('/heartbeat', (req, res) => res.status(200).send('Query Service is alive'))
-
-
-app.post('/update_products_view', async (req, res, next) => {
-
-  try {
-
-    console.log('Updating products_view on query service')
-
-    const event = req.body
-
-    console.log(event)
-
-    if (!event.type) throw new Error()
-
-    updateProductView(event)
-
-    return res.status(200).send()
-
-  } catch (error) {
-    next(error)
-  }
-})
-
 
 app.get('/products', async (req, res) => {
 
@@ -65,12 +43,16 @@ app.use(errorHandler)
 
 async function start() {
   try {
-    await connect('mongodb://query-db-service:27017/products-view-db', {
+    await mongoose.connect('mongodb://query-db-service:27017/products-view-db', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true
     })
+    const nc = await connect({ servers: "nats:4222" })
+    const sub = nc.subscribe("inventory")
+    messageHandler(nc, sub)
     console.log('Connected to the products-view-db')
+    console.log('Connected to nats server')
   } catch (err) {
     console.error(err)
     console.log('Failed to connect to the products-view-db')

@@ -16,16 +16,3 @@ spec:
         - name: products-image
           image: fardinhakimi/products
           imagePullPolicy: Always
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: products-service
-spec:
-  selector:
-    app: products
-  ports:
-    - name: products-port
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
