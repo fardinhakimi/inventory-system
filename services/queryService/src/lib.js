@@ -125,7 +125,7 @@ const pushProductToView = async (product) => {
 
         newProduct.save().then((doc) => { console.log(' Product pushed to product-view') })
             .catch(err => console.error('failed to insert product to product-view'))
-    }
+    } 
 
 }
 
